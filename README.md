@@ -1,4 +1,4 @@
-![](/home/giovanni/Projetos/python/inliner/inliner_logo.png)
+![](inliner_logo.png)
 
 __inliner__ is a tool written in Python that converts indented BASIC programs into the numbered lines style. It supports labels, definitions and statements in multiple lines. And you could choose the comments tthat will be exported or don't.
 
