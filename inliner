@@ -1,0 +1,247 @@
+#!/usr/bin/env python3
+"""
+Inliner 1.0
+A tool that converts indented BASIC programs into line numbered style.
+
+Copyright (C) 2017 by Giovanni Nunes <giovanni.nunes@gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at
+your option) any later version.
+
+Usage:
+    inliner <filename> [ --start=<line> --step=<value> (--rem|--REM) ]
+    inliner --help
+
+Options:
+    --help          Show this screen.
+"""
+from docopt import docopt
+import json
+import re
+import sys
+
+class Inliner(object):
+
+    # regex for definition and use of labels
+    LABEL = "[A-Za-z0-9_]+"
+    label_def = re.compile("^"+LABEL+":$")
+    label_use = re.compile("@\{(@|"+LABEL+")\}")
+    const_def = re.compile("^\' define "+LABEL+" ")
+
+    def __init__(self, input_program, line_number, step_line, remark):
+        self.basic = {}
+        self.labels = {}
+
+        self.line_number = int(line_number)
+        self.step_line = int(step_line)
+        self.remark = remark
+
+        self.__parse(input_program)
+
+
+    def __json(self):
+        """
+        lists code's dictionary in JSON format.
+        """
+        return json.dumps(self.basic, indent=2)
+
+
+    def __labels(self, line, code):
+        """
+        replaces labels by line number/values.
+        """
+
+        for i in range(len(code)):
+
+            while True:
+
+                label_check = self.label_use.search(code[i])
+
+                if label_check:
+                    # recupera o rótulo utilizado
+                    label = label_check.group(1)
+
+                    if label is "@":
+                        # é o rótulo 'self', apenas substitui
+                        code[i] = self.__replace(
+                            code[i],"@{@}",str(line))
+
+                    elif label in self.labels.keys():
+                        # é um dos rótulos definidos no programa?
+                        code[i] = self.__replace(
+                            code[i], "@{"+label+"}",self.labels[label])
+
+                    else:
+                        # referência a um rótulo não definido
+                        print(
+                            "*** Undefined label {} in line {}.".format(
+                            label, line))
+                else:
+                    break
+
+        return code
+
+
+    def __load(self, input_program):
+        """
+        Retrieves BASIC program.
+        """
+        try:
+            # load a file
+            f = open(input_program, 'r')
+
+            for input_line in f:
+                yield input_line
+
+            # forces new lines at end of file
+            yield "\n\n"
+
+            f.close()
+
+        except IOError as e:
+            # someting went wrong
+            self.__message(err.strerror)
+            exit(2)
+
+
+    def __message(self,text):
+        """
+        Prints text in POSIX's standard error.
+        """
+        print("*** {} ***".format(text), file=sys.stderr)
+
+
+    def __new_line(self, line):
+        """
+        Adds a new line inside code's dictionary.
+        """
+        self.basic[str(self.line_number)] = line
+        self.line_number += self.step_line
+
+        return []
+
+
+    def __parse(self, input_file):
+        """
+        Parses a BASIC program and creates the code's dictionary.
+        """
+        single = []
+        counter = 1
+
+        for line in self.__load(input_file):
+
+            # removes all leading and trailing spaces
+            line = line.strip()
+
+            if line is "":
+                # that's a empty line!
+                if len(single)>0:
+                    single = self.__new_line(single)
+
+            elif line[0] is "\'":
+                # looks like a comment...
+
+                if re.search("\'\'",line):
+                    # double '' comments will be preserved
+
+                    if len(single)>0:
+                        single = self.__new_line(single)
+
+                    # inserts comment
+                    single = self.__new_line([
+                        "{}{}".format(
+                            self.remark,
+                            line[2:])
+                        ])
+
+                elif self.const_def.search(line):
+                    # there is a constant (aka 'define')
+                    const = self.const_def.search(line)
+                    value_pos = int(const.span()[1])
+                    const_name = const.group()[9:value_pos-1]
+                    const_value = line[value_pos:]
+                    self.labels[const_name] = const_value
+
+            elif line[-1] is ":" :
+                # that's a line ending with ":"
+
+                if self.label_def.search(line):
+                    # syntax is ok, creates a new label
+                    self.labels[line[0:-1]] = str(self.line_number)
+                else:
+                    # syntax didn't match, show it
+                    self.__message(
+                        "there is a wrong syntax on label '{}' at line {}.".format(
+                            line, counter)
+                        )
+
+            elif line[0] is "\\":
+                # joins it in the previous line
+                single[len(single)-1] += line[1:]
+
+            else:
+                single.append(line)
+
+
+            counter += 1
+
+
+    def __replace(self, string, text, value):
+        """
+        replaces 'text' by 'value'.
+        """
+        return string.replace(text, value)
+
+
+    def list(self):
+        """
+        lists the converted BASIC program.
+        """
+        output=""
+
+        for line in self.basic.keys():
+            current = format(
+                "{} {}\r\n".format(
+                    line, ":".join(
+                        self.__labels(line, self.basic[line]))
+                        )
+                    )
+            if len(current)>255:
+                self.__message(
+                    "More than 255 characters in line {}.".format(line)
+                    )
+
+            output += current
+
+        return output
+
+
+def main():
+
+    # checking command line parameters..
+    start = abs(int(arguments['--start'])) \
+        if arguments['--start'] is not None else 10
+
+    step = abs(int(arguments['--step'])) \
+        if arguments['--step'] is not None else 10
+
+    if arguments['--REM']:
+        remark="REM"
+    elif arguments['--rem']:
+        remark='rem'
+    else:
+        remark="\'"
+
+    basic = Inliner(arguments['<filename>'], start, step, remark)
+
+    print(basic.list(),end="")
+
+
+if __name__ == '__main__':
+    arguments = docopt(__doc__)
+    main()
+
+# vim: set fileencoding=utf-8
+# vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4
