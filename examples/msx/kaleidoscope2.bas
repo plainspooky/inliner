@@ -13,7 +13,7 @@ main_loop:
         ' pick up a color
         K%={{MAXCOLORS}}*RND(1)
         ' left side
-        LINE (0,0)-STEP(i%,{{HEIGHT}}),K%
+        LINE (0,0)-STEP(I%,{{HEIGHT}}),K%
         LINE (0,{{HEIGHT}})-STEP(I%,-{{HEIGHT}}),K%
         ' right side
         LINE ({{WIDTH}},0)-STEP(-I%,{{HEIGHT}}),K%
