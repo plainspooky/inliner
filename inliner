@@ -27,7 +27,7 @@ class Inliner(object):
     # regex for definition and use of labels
     LABEL = "[A-Za-z0-9_]+"
     label_def = re.compile("^"+LABEL+":$")
-    label_use = re.compile("@\{(@|"+LABEL+")\}")
+    label_use = re.compile("\{\{(@|"+LABEL+")\}\}")
     const_def = re.compile("^\' define "+LABEL+" ")
 
     def __init__(self, input_program, line_number, step_line, remark):
@@ -66,12 +66,12 @@ class Inliner(object):
                     if label is "@":
                         # é o rótulo 'self', apenas substitui
                         code[i] = self.__replace(
-                            code[i],"@{@}",str(line))
+                            code[i],"{{@}}",str(line))
 
                     elif label in self.labels.keys():
                         # é um dos rótulos definidos no programa?
                         code[i] = self.__replace(
-                            code[i], "@{"+label+"}",self.labels[label])
+                            code[i], "{{"+label+"}}",self.labels[label])
 
                     else:
                         # referência a um rótulo não definido

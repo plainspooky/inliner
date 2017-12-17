@@ -8,16 +8,15 @@ main_loop:
 
     ' print name on screen
     print "Hello ";
-          \ k$;",  
+          \ k$;",
           \ how do you doing?"
 
     ask_loop:
         input "Again (Y/N)?";k$
-        if @{NO} then
+        if {{NO}} then
             \ end
 
-        if @{YES} then
-            \ goto @{main_loop}
-         
-        goto @{ask_loop}
-  
+        if {{YES}} then
+            \ goto {{main_loop}}
+
+        goto {{ask_loop}}

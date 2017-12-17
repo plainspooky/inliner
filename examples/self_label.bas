@@ -3,6 +3,6 @@
     PRINT "PRESS ANY KEY TO CONTINUE..."
 
     K$=INKEY$
-    IF K$="" THEN @{@}
+    IF K$="" THEN {{@}}
 
     PRINT "BYE!"

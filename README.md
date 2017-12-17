@@ -1,6 +1,6 @@
 ![](inliner_logo.png)
 
-__inliner__ is a tool written in Python that converts indented BASIC programs into the numbered lines style. It supports labels, definitions and statements in multiple lines. And you could choose the comments tthat will be exported or don't.
+__inliner__ is a tool written in Python that converts indented BASIC programs into the numbered lines style. It supports labels, definitions and statements in multiple lines. And you could choose the comments that will be exported or don't.
 
 # How it works?
 
@@ -35,7 +35,7 @@ $ inliner example.bas --start=100
 110 print "Hello ";k$;"!
 ```
 
-The other is the ```--step``` that defines the increment of lines:
+The other is the ```--step``` that defines the line's increment:
 
 ```
 $ inliner example.bas --step=5
@@ -51,7 +51,7 @@ $ inliner example1.bas --start=2000 --step=5
 2005 print "Hello ";k$;"!"
 ```
 
-The default value of both parameters are 10.
+The default value of both parameters is 10.
 
 # Features
 
@@ -110,7 +110,7 @@ Will result:
 ## Labels
 
 Labels are logical marks that points to a specific part of the program. They can contains uppercase and lowercase letters, numbers and the underline -- ```_``` --. They must be defined in its own line and finished using a comma -- ```:``` -- and no anything else!
-To use a label in your program put it between ```@{ }```.
+To use a label in your program put it between ```{{ }}```.
 
 
 ```
@@ -131,9 +131,9 @@ main_loop:
             \ end
 
         if k$="Y" then
-            \ goto @{main_loop}
+            \ goto {{main_loop}}
 
-        goto @{ask_loop}
+        goto {{ask_loop}}
 ```
 
 Will result:
@@ -155,7 +155,7 @@ print "counting... ";
 
 print i;
 i=i+1
-goto @{@}
+goto {{@}}
 ```
 
 Will result:
@@ -174,7 +174,7 @@ And for last, there is the definition that is a special kind of label that store
 ' define «name of definition» «value of definition»
 ```
 
-To use a definition put its name between ```@{ }```, just like the labels.
+To use a definition put its name between ```{{ }}```, just like the labels.
 
 Example:
 
@@ -194,13 +194,13 @@ main_loop:
 
     ask_loop:
         input "Again (Y/N)?";k$
-        if @{NO} then
+        if {{NO}} then
             \ end
 
-        if @{YES} then
-            \ goto @{main_loop}
+        if {{YES}} then
+            \ goto {{main_loop}}
 
-        goto @{ask_loop}
+        goto {{ask_loop}}
 ```
 
 Wil result:
