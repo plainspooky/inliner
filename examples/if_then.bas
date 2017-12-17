@@ -8,9 +8,9 @@
 main_loop:
     INPUT "HOW OLD ARE YOU ?";A
 
-    IF A>=@{LEGAL} THEN
+    IF A>={{LEGAL}} THEN
         \ PRINT "WOULD YOU LIKE A BEER, BUD?"
-        GOTO @{ask_loop}
+        GOTO {{ask_loop}}
 
     PRINT "HOW ABOUT A SODA, KID?"
 
@@ -18,10 +18,10 @@ main_loop:
         PRINT
         INPUT "AGAIN (Y/N) ?";K$
 
-        IF K$=@{NOT} THEN
+        IF K$={{NOT}} THEN
             \ END
 
-        IF K$<>@{YES} GOTO
-            \ @{ask_loop}
+        IF K$<>{{YES}} GOTO
+            \ {{ask_loop}}
 
-        GOTO @{main_loop}
+        GOTO {{main_loop}}

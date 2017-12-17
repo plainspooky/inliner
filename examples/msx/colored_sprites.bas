@@ -4,13 +4,13 @@
 color 15,0,0
 screen 4,3,0
 
-gosub @{set_sprite}
-gosub @{set_colors}
+gosub {{set_sprite}}
+gosub {{set_colors}}
 
 put sprite 0,(112,79),,1
 put sprite 1,(112,79),,0
 
-goto @{@}
+goto {{@}}
 
 set_colors:
     color=( 6,6,2,1)
@@ -19,7 +19,7 @@ set_colors:
     return
 
 set_sprite:
-    restore @{ship_pattern}
+    restore {{ship_pattern}}
     for j%=0 to 1
 
         k$=""

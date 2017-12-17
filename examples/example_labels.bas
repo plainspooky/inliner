@@ -15,6 +15,6 @@ main_loop:
             \ end
 
         if k$="Y" then
-            \ goto @{main_loop}
+            \ goto {{main_loop}}
 
-        goto @{ask_loop}
+        goto {{ask_loop}}

@@ -24,10 +24,10 @@ import sys
 
 class Inliner(object):
 
-    # regex for definition and use of labels
+    # regex label definition and use (everything is a label)
     LABEL = "[A-Za-z0-9_]+"
     label_def = re.compile("^"+LABEL+":$")
-    label_use = re.compile("@\{(@|"+LABEL+")\}")
+    label_use = re.compile("\{\{(@|"+LABEL+")\}\}")
     const_def = re.compile("^\' define "+LABEL+" ")
 
     def __init__(self, input_program, line_number, step_line, remark):
@@ -43,7 +43,7 @@ class Inliner(object):
 
     def __json(self):
         """
-        lists code's dictionary in JSON format.
+        lists code's dictionary in JSON format (usefull for debug).
         """
         return json.dumps(self.basic, indent=2)
 
@@ -60,21 +60,21 @@ class Inliner(object):
                 label_check = self.label_use.search(code[i])
 
                 if label_check:
-                    # recupera o rótulo utilizado
+                    # retrive the label's name
                     label = label_check.group(1)
 
                     if label is "@":
-                        # é o rótulo 'self', apenas substitui
+                        # is this the 'self' label?
                         code[i] = self.__replace(
-                            code[i],"@{@}",str(line))
+                            code[i],"{{@}}",str(line))
 
                     elif label in self.labels.keys():
-                        # é um dos rótulos definidos no programa?
+                        # is this a common label?
                         code[i] = self.__replace(
-                            code[i], "@{"+label+"}",self.labels[label])
+                            code[i], "{{"+label+"}}",self.labels[label])
 
                     else:
-                        # referência a um rótulo não definido
+                        # warning if an undefined label was found
                         print(
                             "*** Undefined label {} in line {}.".format(
                             label, line))
