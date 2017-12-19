@@ -65,7 +65,7 @@ draw_spiral:
 		x%=31-k% mod 32
         ' draw on screen
 		vpoke i%,128+j%
-		vpoke 6144+(y%*32+x%),128+j%
+		vpoke 6144+(y%*32+x%),128+(63-j%)
         ' increment color
 		j%=(j%+8) and 63
 		goto {{spiral_loop}}
