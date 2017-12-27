@@ -2,14 +2,12 @@
 ' BRAINFUCK INTERPRETER FOR MSX-BASIC
 ' (C)2005-2017 - Giovanni Nunes <giovanni.nunes@gmail.com>
 '
-' I wrote this program years ago as a one-liner:
+' I wrote this program few years ago as an one-liner:
 '
 ' 1 DIMA(255):FORI=0TO40*CSRLIN-41:J=VPEEK(I):B=A(K):A(K)=B+(J=45)
 ' -(J=43):K=K+(J=60)-(J=62):IFJ=46THENPRINTCHR$(A(K));:NEXTELSEIFJ
 ' =44THENA(K)=ASC(INPUT$(1)):NEXTELSEIFJ=91THENL=B:P=I:NEXTELSEIFJ
 ' =93THENL=L-1:I=-(L>0)*P-(L=0)*I:NEXTELSENEXT
-'
-' Using Inliner is now possible view it in a more readable format.
 '
 dima(255)
 fori=0to40*csrlin-41

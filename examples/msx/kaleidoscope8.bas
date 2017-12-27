@@ -1,11 +1,12 @@
-'' kaleidoscope (MSX 16 colors)
+'' kaleidoscope
 
 ' define WIDTH 255
-' define HEIGHT 191
-' define MAXCOLORS 16
+' define HEIGHT 211
+' define MAXCOLORS 256
+' define SCREEN 8
 
 COLOR 15,0,0
-SCREEN 2
+SCREEN {{SCREEN}}
 I%=RND(-TIME)
 
 main_loop:
@@ -18,8 +19,5 @@ main_loop:
         ' right side
         LINE ({{WIDTH}},0)-STEP(-I%,{{HEIGHT}}),K%
         LINE ({{WIDTH}},{{HEIGHT}})-STEP(-I%,-{{HEIGHT}}),K%
-
     NEXT I%
     GOTO {{main_loop}}
-
-' take a look in the MSX2 version too!

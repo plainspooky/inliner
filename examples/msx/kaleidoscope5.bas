@@ -1,9 +1,9 @@
 '' Kaleidoscope
 
 ' define WIDTH 255
-' define HEIGHT 191
+' define HEIGHT 211
 ' define MAXCOLORS 16
-' define SCREEN 2
+' define SCREEN 5
 
 COLOR 15,0,0
 SCREEN {{SCREEN}}
