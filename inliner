@@ -22,6 +22,9 @@ import json
 import re
 import sys
 
+START = 10
+STEP = 10
+
 class Inliner(object):
 
     # regex label definition and use (everything is a label)
@@ -100,7 +103,7 @@ class Inliner(object):
 
             f.close()
 
-        except IOError as e:
+        except IOError as err:
             # someting went wrong
             self.__message(err.strerror)
             exit(2)
@@ -222,10 +225,10 @@ def main():
 
     # checking command line parameters..
     start = abs(int(arguments['--start'])) \
-        if arguments['--start'] is not None else 10
+        if arguments['--start'] is not None else START
 
     step = abs(int(arguments['--step'])) \
-        if arguments['--step'] is not None else 10
+        if arguments['--step'] is not None else STEP
 
     if arguments['--REM']:
         remark="REM"
