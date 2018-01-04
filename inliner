@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Inliner 1.0
+Inliner 1.0-1
 A tool that converts indented BASIC programs into line numbered style.
 
 Copyright (C) 2017 by Giovanni Nunes <giovanni.nunes@gmail.com>
@@ -17,6 +17,7 @@ Usage:
 Options:
     --help          Show this screen.
 """
+from __future__ import print_function
 from docopt import docopt
 import json
 import re
@@ -32,6 +33,9 @@ class Inliner(object):
     label_def = re.compile("^"+LABEL+":$")
     label_use = re.compile("\{\{(@|"+LABEL+")\}\}")
     const_def = re.compile("^\' define "+LABEL+" ")
+
+    # regex for numbered line_number
+    line_numbered = re.compile("^[0-9]{1,} ?")
 
     def __init__(self, input_program, line_number, step_line, remark):
         self.basic = {}
@@ -55,7 +59,6 @@ class Inliner(object):
         """
         replaces labels by line number/values.
         """
-
         for i in range(len(code)):
 
             while True:
@@ -75,12 +78,13 @@ class Inliner(object):
                         # is this a common label?
                         code[i] = self.__replace(
                             code[i], "{{"+label+"}}",self.labels[label])
+                        repeat = 0
 
                     else:
                         # warning if an undefined label was found
-                        print(
-                            "*** Undefined label {} in line {}.".format(
-                            label, line))
+                        self.__message("Undefined label {} in line {}."\
+                            .format(label, line))
+                        sys.exit(2)
                 else:
                     break
 
@@ -143,6 +147,10 @@ class Inliner(object):
                 if len(single)>0:
                     single = self.__new_line(single)
 
+            elif self.line_numbered.search(line):
+                # BAD: a line that begins with a number!
+                self.__message('Numbered line found: {}'.format(line))
+
             elif line[0] is "\'":
                 # looks like a comment...
 
@@ -176,17 +184,16 @@ class Inliner(object):
                 else:
                     # syntax didn't match, show it
                     self.__message(
-                        "there is a wrong syntax on label '{}' at line {}.".format(
-                            line, counter)
+                        "There is a wrong syntax on label '{}' at line {}.".\
+                        format(line, counter)
                         )
 
             elif line[0] is "\\":
-                # joins it in the previous line
+                # joins this to the previous line
                 single[len(single)-1] += line[1:]
 
             else:
                 single.append(line)
-
 
             counter += 1
 
