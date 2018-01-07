@@ -211,7 +211,7 @@ class Inliner(object):
         """
         output=""
 
-        for line in self.basic.keys():
+        for line in sorted(self.basic):
             current = format(
                 "{} {}\r\n".format(
                     line, ":".join(
