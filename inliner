@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Inliner 1.0-1
+Inliner 1.0-3
 A tool that converts indented BASIC programs into line numbered style.
 
 Copyright (C) 2017 by Giovanni Nunes <giovanni.nunes@gmail.com>
@@ -11,53 +11,68 @@ the Free Software Foundation; either version 3 of the License, or (at
 your option) any later version.
 
 Usage:
-    inliner <filename> [ --start=<line> --step=<value> (--rem|--REM) ]
+    inliner <filename> [ --start=<line> --step=<value> --upper --rem ]
     inliner --help
 
 Options:
     --help          Show this screen.
+    --rem           Use the REM statement istead of the apostrophe.
+    --upper         Put all BASIC statements in uppercase.
 """
-from __future__ import print_function
+
 from docopt import docopt
+from sys import exit as sys_exit
+from sys import stderr as sys_stderr
 import json
 import re
-import sys
 
 START = 10
 STEP = 10
 
 class Inliner(object):
 
-    # regex label definition and use (everything is a label)
+    # REGEX for label definition and its uses
     LABEL = "[A-Za-z0-9_]+"
     label_def = re.compile("^"+LABEL+":$")
     label_use = re.compile("\{\{(@|"+LABEL+")\}\}")
     const_def = re.compile("^\' define "+LABEL+" ")
 
-    # regex for numbered line_number
+    # REGEX for search numbered lines
     line_numbered = re.compile("^[0-9]{1,} ?")
 
     def __init__(self, input_program, line_number, step_line, remark):
+
         self.basic = {}
         self.labels = {}
 
         self.line_number = int(line_number)
         self.step_line = int(step_line)
+
         self.remark = remark
+
+        # this REGEX searchs for both strings and comments
+        self.quotes = re.compile("(\"[^\"]+\"|"+remark+".*$)")
 
         self.__parse(input_program)
 
 
     def __json(self):
         """
-        lists code's dictionary in JSON format (usefull for debug).
+        Lists code's dictionary in JSON format (used by me for debug).
+
+        There is no input arguments and the output is the dictionary
+        formated as a JSON file.
         """
         return json.dumps(self.basic, indent=2)
 
 
     def __labels(self, line, code):
         """
-        replaces labels by line number/values.
+        Rplaces labels by line number or values.
+
+        'line' is the BASIC's line number and 'code' are the joined BASIC
+        statements. Both are the key/value pai from the 'self.basic' dictionary.
+        Returns a single string begining with line number and labels translated.
         """
         for i in range(len(code)):
 
@@ -84,7 +99,7 @@ class Inliner(object):
                         # warning if an undefined label was found
                         self.__message("Undefined label {} in line {}."\
                             .format(label, line))
-                        sys.exit(2)
+                        sys_exit(2)
                 else:
                     break
 
@@ -93,7 +108,11 @@ class Inliner(object):
 
     def __load(self, input_program):
         """
-        Retrieves BASIC program.
+        Retrieves a BASIC program from a file.
+
+        'input_program' is a string containing the (path+)filename got from
+        command line parameter.
+        Returns the file plus extra new lines.
         """
         try:
             # load a file
@@ -116,13 +135,20 @@ class Inliner(object):
     def __message(self,text):
         """
         Prints text in POSIX's standard error.
+
+        'text' is the text to print.
         """
-        print("*** {} ***".format(text), file=sys.stderr)
+        print("*** {} ***".format(text), file=sys_stderr)
 
 
     def __new_line(self, line):
         """
-        Adds a new line inside code's dictionary.
+        Adds a new line inside 'self.basic' dictionary and increments the
+        line counter.
+
+        'line' is a string containing the BASIC statements.
+        Returns a empty list to initialize 'single' list on '__parse'
+        method.
         """
         self.basic[str(self.line_number)] = line
         self.line_number += self.step_line
@@ -132,7 +158,9 @@ class Inliner(object):
 
     def __parse(self, input_file):
         """
-        Parses a BASIC program and creates the code's dictionary.
+        Parses BASIC program and populates 'self.basic' dictionary.
+
+        'input_file' is the file to be converted.
         """
         single = []
         counter = 1
@@ -155,12 +183,12 @@ class Inliner(object):
                 # looks like a comment...
 
                 if re.search("\'\'",line):
-                    # double '' comments will be preserved
+                    # double '' are comments that will be preserved
 
                     if len(single)>0:
                         single = self.__new_line(single)
 
-                    # inserts comment
+                    # inserts the comment
                     single = self.__new_line([
                         "{}{}".format(
                             self.remark,
@@ -184,7 +212,7 @@ class Inliner(object):
                 else:
                     # syntax didn't match, show it
                     self.__message(
-                        "There is a wrong syntax on label '{}' at line {}.".\
+                        "Wrong syntax on label '{}' at line {}.".\
                         format(line, counter)
                         )
 
@@ -200,14 +228,37 @@ class Inliner(object):
 
     def __replace(self, string, text, value):
         """
-        replaces 'text' by 'value'.
+        Replaces 'text' by 'value' on 'string'.
+
+        Returns the same string with text replaced.
         """
         return string.replace(text, value)
 
 
-    def list(self):
+    def __uppercase(self, text):
         """
-        lists the converted BASIC program.
+        Put BASIC statements in upper case, except if between quotes
+
+        'text' is the BASIC line with labels already translated.
+        Returns the same line with BASIC statements in uppercase.
+        """
+
+        # everything in UPPERCASE
+        upper_text = text.upper()
+
+        for quote in self.quotes.findall(text):
+            # strings to the original format
+            upper_text  = upper_text.replace(quote.upper(), quote)
+
+        return upper_text
+
+
+    def list(self, uppercase):
+        """
+        Lists the converted BASIC program.
+
+        'uppercase' is the parameter from command line argument.
+        Returns the BASIC program on standard output.
         """
         output=""
 
@@ -218,6 +269,10 @@ class Inliner(object):
                         self.__labels(line, self.basic[line]))
                         )
                     )
+
+            if uppercase is True:
+                current = self.__uppercase(current)
+
             if len(current)>255:
                 self.__message(
                     "More than 255 characters in line {}.".format(line)
@@ -237,16 +292,16 @@ def main():
     step = abs(int(arguments['--step'])) \
         if arguments['--step'] is not None else STEP
 
-    if arguments['--REM']:
-        remark="REM"
-    elif arguments['--rem']:
-        remark='rem'
+    to_upper = True if arguments['--upper'] is True else False
+
+    if arguments['--rem']:
+        remark='rem' if to_upper is False else 'REM'
     else:
         remark="\'"
 
     basic = Inliner(arguments['<filename>'], start, step, remark)
 
-    print(basic.list(),end="")
+    print(basic.list(to_upper),end="")
 
 
 if __name__ == '__main__':
