@@ -1,8 +1,7 @@
-'' EXAMPLE.BAS
+'' It is a comment
 
 ' get user's name
-input "What is your name?";k$    
+input "What is your name?";k$
 
 ' print name on screen
 print "Hello ";k$;"!"
-

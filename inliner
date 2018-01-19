@@ -26,18 +26,18 @@ from Inliner import Inliner
 START = 10
 STEP = 10
 
-# def check_argument(argument,value_true, value_false):
-#     return
-
 def main():
-
     # checking command line parameters..
+
+    # first line
     start = abs(int(arguments['--start'])) \
         if arguments['--start'] is not None else START
 
+    # line icrement
     step = abs(int(arguments['--step'])) \
         if arguments['--step'] is not None else STEP
 
+    # UPPERCASE or lowercase output
     to_upper = True if arguments['--upper'] is True else False
 
     # check the use of the rem instead of apostrophe

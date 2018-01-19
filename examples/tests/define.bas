@@ -1,4 +1,3 @@
-'' EXAMPLE.BAS
 ' define YES k$="Y" or k$="y"
 ' define NO k$="N" or k$="n"
 

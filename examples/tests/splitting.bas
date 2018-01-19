@@ -1,5 +1,3 @@
-'' EXAMPLE.BAS
-
 ' get user's name
 input "What is your name?";k$
 
