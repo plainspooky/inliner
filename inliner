@@ -1,9 +1,76 @@
 #!/usr/bin/env python3
-"""
-Inliner 1.0-4
+import gettext
+import locale
+import logging
+from os import path
+from docopt import docopt
+
+from Inliner import Inliner
+
+START = 10
+STEP = 10
+
+
+def init_locale():
+    """Initalize localization support. Checks the current system's locale
+    and tries to load it if exists. Otherwise uses the default locale.
+    """
+    locale.setlocale(locale.LC_ALL, '')
+    (loc, enc) = locale.getlocale()
+
+    filename = path.join(
+        'lang', '{}.{}', 'LC_MESSAGES/messages.mo').format(loc, enc)
+
+    try:
+        logging.debug(
+            "Opening message file '%s' for locale '%s'", filename, loc)
+        trans = gettext.GNUTranslations(open(filename, "rb"))
+
+    except IOError:
+        logging.debug("Locale not found. Using default messages")
+        trans = gettext.NullTranslations()
+
+    trans.install()
+
+
+def main():
+
+    # fist line and increment between lines
+    start = abs(int(arguments['--start'])) if arguments[
+        '--start'] is not None else START
+    step = abs(int(arguments['--step'])) if arguments[
+        '--step'] is not None else STEP
+
+    # UPPERCASE or lowercase code output
+    to_upper = True if arguments['--upper'] is True else False
+
+    # check use of 'rem' stetement instead of apostrophe
+    if arguments['--rem']:
+        # if output is in uppercase, adjust it
+        remark = 'rem' if to_upper is False else 'REM'
+    else:
+        remark = "\'"
+
+    # why os load here?
+    # because I'm going to implement the conversion of multiples files.
+    program = Inliner.load(filename=arguments['<filename>'])
+
+    numbered = Inliner(
+        program=program, start_line=start, step_line=step, remark=remark)
+
+    print(numbered.list(uppercase=to_upper, linefeed="\r\n"), end="")
+
+
+if __name__ == '__main__':
+
+    # initiaize localization support
+    init_locale()
+
+    arguments = docopt(_("""
+Inliner 1.1
 A tool that converts indented BASIC programs into line numbered style.
 
-Copyright (C) 2017 by Giovanni Nunes <giovanni.nunes@gmail.com>
+Copyright (C) 2017-2018 by Giovanni Nunes <giovanni.nunes@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,44 +85,8 @@ Options:
     --help          Show this screen.
     --rem           Use the REM statement istead of the apostrophe.
     --upper         Put all BASIC statements in uppercase.
-"""
+ """))
 
-from docopt import docopt
-from Inliner import Inliner
-
-START = 10
-STEP = 10
-
-def main():
-    # checking command line parameters..
-
-    # first line
-    start = abs(int(arguments['--start'])) \
-        if arguments['--start'] is not None else START
-
-    # line icrement
-    step = abs(int(arguments['--step'])) \
-        if arguments['--step'] is not None else STEP
-
-    # UPPERCASE or lowercase output
-    to_upper = True if arguments['--upper'] is True else False
-
-    # check the use of the rem instead of apostrophe
-    if arguments['--rem']:
-        # if output is in uppercase, adjust it
-        remark='rem' if to_upper is False else 'REM'
-    else:
-        remark="\'"
-
-    program = Inliner.load(arguments['<filename>'])
-
-    basic = Inliner(program, start, step, remark)
-
-    print(basic.list(uppercase=to_upper, linefeed="\r\n"), end="")
-
-
-if __name__ == '__main__':
-    arguments = docopt(__doc__)
     main()
 
 # vim: set fileencoding=utf-8

@@ -6,9 +6,9 @@ STEP=10
 LF="\n"
 UPPER=False
 
-def fake_inliner(program):
-    program = Inliner.load(program)
-    code = Inliner(program, START, STEP)
+def fake_inliner(filename):
+    program = Inliner.load(filename=filename)
+    code = Inliner(program=program, start_line=START, step_line=STEP)
     return code.list(uppercase=UPPER, linefeed=LF)
 
 
