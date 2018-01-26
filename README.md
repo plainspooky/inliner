@@ -1,4 +1,4 @@
-![](inliner_logo.png)
+![](images/inliner_logo.png)
 
 __Inliner__ is a tool that converts a BASIC program written in an indented BASIC style into the numbered lines style. It supports labels, definitions and statements in multiple lines and you could to choose the comments that will be exported after conversion.
 

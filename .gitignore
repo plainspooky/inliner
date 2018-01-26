@@ -1,4 +1,6 @@
 .cache/*
 __pycache__/*
+tests/__pycache__/*
+tests/.cache/*
 py3/*
 *.swp
