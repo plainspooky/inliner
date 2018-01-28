@@ -1,6 +1,6 @@
 # Examples for MSX
 
-There are few examples of MSX-BASIC programs I've written using the Inliner's syntax.
+There are few examples of programs using Inlier's syntax.
 
 ## brainfuck.bas
 
@@ -8,7 +8,7 @@ A [brainfuck](https://en.wikipedia.org/wiki/Brainfuck) interpreter in a single B
 
 ![](../../images/brainfuck.png)
 
-There is a sample 'hello world' :
+There is a 'hello world' in Brainfuck as sample code:
 ```
 ++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>+
 +.<<+++++++++++++++.>.+++.------.--------.>+.>.
@@ -16,42 +16,42 @@ There is a sample 'hello world' :
 
 ## colored_sprite.bas
 
-Example of MSX2's colored sprites using the "OR method" to obtain a 3rd color.
+Example of MSX2's colored sprites using "OR method" to obtain a 3rd color on the intersection of two sprites.
 
 ![](../../images/colored_sprite.png)
 
 ## hardware_scroll.bas
 
-Simple animation using MSX2+'s hardware scrolling feature.
+Simple animation using MSX2+'s hardware scrolling.
 
 ![](../../images/hardware_scroll.png)
 
 ## kaleidoscope2.bas
 
-Kaleidoscope program for MSX1 in 256×192, 16 colors and color clashing.
+Kaleidoscope program for MSX1 in 256×192, 16 colors and color clashing (SCREEN 2).
 
 ![](../../images/kaleidoscope2.png)
 
 ## kaleidoscope5.bas
 
-Kaleidoscope program for MSX2 in 256×212 and 16 colors.
+Kaleidoscope program for MSX2 in 256×212 and 16 colors (SCREEN 5).
 
 ![](../../images/kaleidoscope5.png)
 
 ## kaleidoscope8.bas
 
-Kaleidoscope program for MSX2 in 256×212 and 256 colors.
+Kaleidoscope program for MSX2 in 256×212 and 256 colors (SCREEN 8).
 
 ![](../../images/kaleidoscope8.png)
 
 ## spiral.bas
 
-Simple animation on the 32×24 text mode.
+Simple animation on the 32×24 text mode (SCREEN 1).
 
 ![](../../images/spiral.png)
 
 ## sunset.bas
 
-A sunset pattern.
+A pretty sunset pattern.
 
 ![](../../images/sunset.png)
