@@ -1,6 +1,24 @@
 #!/usr/bin/env python3
-import gettext
-import locale
+"""
+Inliner 1.1
+A tool that converts indented BASIC programs into line numbered style.
+
+Copyright (C) 2017-2018 by Giovanni Nunes <giovanni.nunes@gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at
+your option) any later version.
+
+Usage:
+inliner <filename> [ --start=<line> --step=<value> --upper --rem ]
+inliner --help
+
+Options:
+--help          Show this screen.
+--rem           Use the REM statement istead of the apostrophe.
+--upper         Put all BASIC statements in uppercase.
+"""
 import logging
 from os import path
 from docopt import docopt
@@ -9,28 +27,6 @@ from Inliner import Inliner
 
 START = 10
 STEP = 10
-
-
-def init_locale():
-    """Initalize localization support. Checks the current system's locale
-    and tries to load it if exists. Otherwise uses the default locale.
-    """
-    locale.setlocale(locale.LC_ALL, '')
-    (loc, enc) = locale.getlocale()
-
-    filename = path.join(
-        'lang', '{}.{}', 'LC_MESSAGES/messages.mo').format(loc, enc)
-
-    try:
-        logging.debug(
-            "Opening message file '%s' for locale '%s'", filename, loc)
-        trans = gettext.GNUTranslations(open(filename, "rb"))
-
-    except IOError:
-        logging.debug("Locale not found. Using default messages")
-        trans = gettext.NullTranslations()
-
-    trans.install()
 
 
 def main():
@@ -62,31 +58,7 @@ def main():
 
 
 if __name__ == '__main__':
-
-    # initiaize localization support
-    init_locale()
-
-    arguments = docopt(_("""
-Inliner 1.1
-A tool that converts indented BASIC programs into line numbered style.
-
-Copyright (C) 2017-2018 by Giovanni Nunes <giovanni.nunes@gmail.com>
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or (at
-your option) any later version.
-
-Usage:
-    inliner <filename> [ --start=<line> --step=<value> --upper --rem ]
-    inliner --help
-
-Options:
-    --help          Show this screen.
-    --rem           Use the REM statement istead of the apostrophe.
-    --upper         Put all BASIC statements in uppercase.
- """))
-
+    arguments = docopt(__doc__)
     main()
 
 # vim: set fileencoding=utf-8

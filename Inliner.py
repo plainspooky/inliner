@@ -40,7 +40,7 @@ class Inliner(object):
         """Rplaces a label by a line number or a value.\n
         'line' is line number and 'code' the BASIC statements the\n
         Key/Value of 'self.basic' dictionary.\n
-        Returns a string with all labels translated.
+        Returns a string with all labels translated.\n
         """
         for i in range(len(code)):
 
@@ -70,7 +70,7 @@ class Inliner(object):
                     else:
                         # exist if found a undefined label
                         logger.error(
-                            _("Undefined label '{}' in '{}'").format(
+                            "Undefined label '{}' in '{}'".format(
                                 label, code[i]))
                         sys_exit(2)
                 else:
@@ -110,7 +110,7 @@ class Inliner(object):
             elif self.line_numbered.search(line):
                 # BAD: a line that begins with a number!
                 logger.warning(
-                    _('Numbered line: {}').format(line[0:64]))
+                    'Numbered line: {}'.format(line[0:64]))
 
             elif line[0] is "\'":
                 # looks like a comment...
@@ -145,7 +145,7 @@ class Inliner(object):
                 else:
                     # syntax didn't match, show it
                     logger.error(
-                        _("Invalid label syntax '{}' in line {}.").format(
+                        "Invalid label syntax '{}' in line {}.".format(
                             line, counter)
                     )
 
@@ -198,7 +198,7 @@ class Inliner(object):
 
             if len(current) > 255:
                 logger.warning(
-                    _("More than 255 characters in line {}.").format(line))
+                    "More than 255 characters in line {}.".format(line))
 
             output += current
 
