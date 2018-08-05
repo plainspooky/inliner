@@ -1,0 +1,29 @@
+{
+    //
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    //
+    // This task for Microsoft's Visual Studio Code allows you to
+    // automatically convert am indented BASIC program using Inline's
+    // syntax to the numbered-line style. Inliner files must be in
+    // the same directory of project or in system PATH.
+    //
+    // The FINDSTR tool is used to filter blank lines on Inline's
+    // generated file.
+    //
+    //  (C) Daniel Vicentini -- July, 31th 2018.
+    //
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "convert_to_msxbasic",
+            "type": "shell",
+            "command": "python inliner ${file} --start=1000 | findstr \/v \"^$\" > ${file}_msxbasic.bas" ,
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
